@@ -6,6 +6,7 @@ import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
 
   const products = [
     {
@@ -13,28 +14,44 @@ const Index = () => {
       name: 'Tuxur Brushe',
       category: 'FERQUINS',
       price: 3400,
-      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7997cea6-851c-4e2b-aaf5-b75d65c983e5.jpg'
+      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7997cea6-851c-4e2b-aaf5-b75d65c983e5.jpg',
+      description: 'Профессиональная кисть для контурирования с натуральным ворсом. Идеально подходит для нанесения и растушевки сухих и кремовых текстур.',
+      features: ['Натуральный ворс козы', 'Ручка из черного дерева', 'Длина: 18 см', 'Ferrule из латуни'],
+      materials: 'Натуральный ворс козы высшей категории, обработанный вручную для максимальной мягкости.',
+      care: 'Мойте кисть еженедельно специальным шампунем для кистей. Сушите в горизонтальном положении.'
     },
     {
       id: 2,
       name: 'Professional Set',
       category: 'PREMIUM',
       price: 8900,
-      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7653869d-0c8e-49be-9687-2106c566fd89.jpg'
+      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7653869d-0c8e-49be-9687-2106c566fd89.jpg',
+      description: 'Полный набор из 12 кистей для профессионального макияжа. Включает все необходимое для создания любого образа.',
+      features: ['12 кистей разного размера', 'Кожаный футляр', 'Натуральный и синтетический ворс', 'Гарантия 3 года'],
+      materials: 'Премиальная комбинация натурального ворса пони и синтетических волокон Taklon.',
+      care: 'Храните в прилагаемом футляре. Чистите после каждого использования специальными средствами.'
     },
     {
       id: 3,
       name: 'Gold Edition',
       category: 'LUXURY',
       price: 5200,
-      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/88c49e49-5df2-48d3-a04f-8dba6c679134.jpg'
+      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/88c49e49-5df2-48d3-a04f-8dba6c679134.jpg',
+      description: 'Лимитированная коллекционная кисть с позолоченными деталями. Создана вручную мастерами с 20-летним опытом.',
+      features: ['Позолоченная ferrule 24К', 'Эксклюзивный дизайн', 'Сертификат подлинности', 'Подарочная упаковка'],
+      materials: 'Отборный ворс соболя, собранный вручную. Ручка из красного дерева с инкрустацией.',
+      care: 'Деликатная ручная чистка. Используйте только профессиональные средства для натурального ворса.'
     },
     {
       id: 4,
       name: 'Blending Brush',
       category: 'ESSENTIAL',
       price: 2800,
-      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7997cea6-851c-4e2b-aaf5-b75d65c983e5.jpg'
+      image: 'https://cdn.poehali.dev/projects/ed43cede-4056-401e-a1f7-9e0e4933dde1/files/7997cea6-851c-4e2b-aaf5-b75d65c983e5.jpg',
+      description: 'Универсальная кисть для растушевки теней. Мягкая и пушистая, идеальна для создания плавных переходов.',
+      features: ['Синтетический ворс премиум', 'Эргономичная ручка', 'Длина: 16 см', 'Антибактериальное покрытие'],
+      materials: 'Инновационный синтетический ворс Taklon, имитирующий натуральный с улучшенными свойствами.',
+      care: 'Можно мыть ежедневно. Быстро сохнет и не теряет форму при правильном уходе.'
     }
   ];
 
@@ -104,7 +121,14 @@ const Index = () => {
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
         {products.map((product) => (
-          <Card key={product.id} className="overflow-hidden border-0 shadow-lg hover-scale group">
+          <Card 
+            key={product.id} 
+            className="overflow-hidden border-0 shadow-lg hover-scale group cursor-pointer"
+            onClick={() => {
+              setSelectedProduct(product.id);
+              setActiveSection('product');
+            }}
+          >
             <div className="aspect-square overflow-hidden bg-card">
               <img 
                 src={product.image} 
@@ -119,7 +143,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold">{product.name}</h3>
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-bold">{product.price} ₽</span>
-                <Button size="sm" className="bg-primary hover:bg-primary/90">
+                <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={(e) => e.stopPropagation()}>
                   <Icon name="ShoppingCart" size={16} />
                 </Button>
               </div>
@@ -166,6 +190,118 @@ const Index = () => {
       </div>
     </div>
   );
+
+  const renderProduct = () => {
+    const product = products.find(p => p.id === selectedProduct);
+    if (!product) return null;
+
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-16 animate-fade-in">
+        <Button 
+          variant="ghost" 
+          className="mb-8 hover:text-accent"
+          onClick={() => setActiveSection('catalog')}
+        >
+          <Icon name="ArrowLeft" size={20} className="mr-2" />
+          Назад к каталогу
+        </Button>
+
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="space-y-6">
+            <div className="aspect-square overflow-hidden bg-card rounded-lg">
+              <img 
+                src={product.image} 
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <div>
+              <Badge variant="secondary" className="mb-4 tracking-wider">
+                {product.category}
+              </Badge>
+              <h1 className="text-5xl font-bold mb-4">{product.name}</h1>
+              <p className="text-4xl font-bold text-accent mb-6">{product.price} ₽</p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                {product.description}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold">Характеристики</h3>
+              <ul className="space-y-2">
+                {product.features.map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <Icon name="Check" size={20} className="text-accent mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Card className="p-6 border-0 bg-secondary">
+              <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                <Icon name="Sparkles" size={24} className="text-accent" />
+                Материалы
+              </h3>
+              <p className="text-muted-foreground">{product.materials}</p>
+            </Card>
+
+            <Card className="p-6 border-0 bg-secondary">
+              <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                <Icon name="Info" size={24} className="text-accent" />
+                Уход
+              </h3>
+              <p className="text-muted-foreground">{product.care}</p>
+            </Card>
+
+            <div className="flex gap-4">
+              <Button size="lg" className="flex-1 bg-primary hover:bg-primary/90 text-lg py-6">
+                <Icon name="ShoppingCart" size={20} className="mr-2" />
+                Добавить в корзину
+              </Button>
+              <Button size="lg" variant="outline" className="px-6">
+                <Icon name="Heart" size={20} />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-16 pt-16 border-t border-border">
+          <h2 className="text-3xl font-bold mb-8 text-center">Похожие товары</h2>
+          <div className="grid md:grid-cols-4 gap-6">
+            {products.filter(p => p.id !== selectedProduct).slice(0, 3).map((item) => (
+              <Card 
+                key={item.id}
+                className="overflow-hidden border-0 shadow-lg hover-scale group cursor-pointer"
+                onClick={() => {
+                  setSelectedProduct(item.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                <div className="aspect-square overflow-hidden bg-card">
+                  <img 
+                    src={item.image} 
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <CardContent className="p-4 space-y-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {item.category}
+                  </Badge>
+                  <h3 className="text-lg font-semibold">{item.name}</h3>
+                  <p className="text-xl font-bold">{item.price} ₽</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const renderDelivery = () => (
     <div className="max-w-4xl mx-auto px-4 py-16 space-y-12 animate-fade-in">
@@ -291,6 +427,7 @@ const Index = () => {
         {activeSection === 'catalog' && renderCatalog()}
         {activeSection === 'about' && renderAbout()}
         {activeSection === 'delivery' && renderDelivery()}
+        {activeSection === 'product' && renderProduct()}
       </main>
 
       <footer className="bg-card border-t border-border mt-16">
